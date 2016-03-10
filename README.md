@@ -24,6 +24,7 @@ Leagues Included:
 4. Bundesliga  
 5. French Ligue 1  
 6. Italian Serie A  
+7. UEFA Europa League
 
 ### Known Issues:  
 
