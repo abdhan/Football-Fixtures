@@ -40,10 +40,10 @@ def important(hometeam, awayteam, length, topTeams):
 # Function to correct the user input to make it usable
 def chop(userinput):
     userinput = userinput
-    .replace('AS ', '')
-    .replace('FC ', '')
-    .replace(' FC', '')
-    .replace('EA ', '')
+    userinput.replace('AS ', '')
+    userinput.replace('FC ', '')
+    userinput.replace(' FC', '')
+    userinput.replace('EA ', '')
 
 
 # Function to correct the date and time of the found fixture
@@ -109,10 +109,11 @@ if __name__ == "__main__":
         4. Bundesliga
         5. French Ligue 1
         6. Italian Serie A
+        7. UEFA Europa League
     """))
 
     # Checking for the validity of user input
-    if (main <= 6 and main > 0):
+    if (main <= 7 and main > 0):
         print "Loading..",
 
         FIXTURES_URL = 'http://www.goal.com/en-india/fixtures/'
@@ -122,6 +123,7 @@ if __name__ == "__main__":
         BL_FIXED = 'bundesliga/9'
         L1_FIXED = 'ligue-1/16'
         SA_FIXED = 'serie-a/13'
+        UEL_FIXED = 'uefa-europa-league/18'
 
         if(main == 1):
             url_league = UCL_FIXED
@@ -135,16 +137,16 @@ if __name__ == "__main__":
             url_league = L1_FIXED
         elif(main == 6):
             url_league = SA_FIXED
+        elif(main == 7):
+            url_league = UEL_FIXED
 
         page = requests.get(FIXTURES_URL + url_league)
         tree = html.fromstring(page.text)
 
-        HOME_TEAM_XPATH =
-        '//div[@class="module module-team simple home"]/span/text()'
-        AWAY_TEAM_XPATH =
-        '//div[@class="module module-team simple away"]/span/text()'
+        HOME_TEAM_XPATH ='//div[@class="module module-team simple home"]/span/text()'
+        AWAY_TEAM_XPATH ='//div[@class="module module-team simple away"]/span/text()'
 
-        if(main == 1):
+        if(main == 1 or main == 7):
             uclhome = tree.xpath(HOME_TEAM_XPATH)
             uclaway = tree.xpath(AWAY_TEAM_XPATH)
             total_teams = len(uclhome)
@@ -186,20 +188,14 @@ if __name__ == "__main__":
                 page = requests.get(TABLES_FIXED + url_league)
                 tree = html.fromstring(page.text)
 
-                TEAM_RANKWISE_XPATH =
-                '//td[@class="legend team short"]'
-                UCL_HREF_CONTAINS_XPATH =
-                '/a[starts-with(@href, "/en-india/teams/")]/text()'
-                EPL_HREF_CONTAINS_XPATH =
-                '/a[starts-with(@href, "/en-india/teams/england/")]/text()'
-                LL_HREF_CONTAINS_XPATH =
-                '/a[starts-with(@href, "/en-india/teams/spain/")]/text()'
-                BL_HREF_CONTAINS_XPATH =
-                '/a[starts-with(@href, "/en-india/teams/germany/")]/text()'
-                L1_HREF_CONTAINS_XPATH =
-                '/a[starts-with(@href, "/en-india/teams/france/")]/text()'
-                SA_HREF_CONTAINS_XPATH =
-                '/a[starts-with(@href, "/en-india/teams/italy/")]/text()'
+                TEAM_RANKWISE_XPATH ='//td[@class="legend team short"]'
+                UCL_HREF_CONTAINS_XPATH ='/a[starts-with(@href, "/en-india/teams/")]/text()'
+                EPL_HREF_CONTAINS_XPATH ='/a[starts-with(@href, "/en-india/teams/england/")]/text()'
+                LL_HREF_CONTAINS_XPATH ='/a[starts-with(@href, "/en-india/teams/spain/")]/text()'
+                BL_HREF_CONTAINS_XPATH ='/a[starts-with(@href, "/en-india/teams/germany/")]/text()'
+                L1_HREF_CONTAINS_XPATH ='/a[starts-with(@href, "/en-india/teams/france/")]/text()'
+                SA_HREF_CONTAINS_XPATH ='/a[starts-with(@href, "/en-india/teams/italy/")]/text()'
+                UEL_HREF_CONTAINS_XPATH ='/a[starts-with(@href, "/en-india/teams/")]/text()'
 
                 if (main == 1):
                     xpath_teams_list = UCL_HREF_CONTAINS_XPATH
@@ -213,15 +209,17 @@ if __name__ == "__main__":
                     xpath_teams_list = L1_HREF_CONTAINS_XPATH
                 elif (main == 6):
                     xpath_teams_list = SA_HREF_CONTAINS_XPATH
+                elif (main == 7):
+                    xpath_teams_list = UEL_HREF_CONTAINS_XPATH
 
-                if (main == 1):
+                if (main == 1 or main == 7):
                     tempTeamName = tree.xpath(
                         TEAM_RANKWISE_XPATH + xpath_teams_list)
                 else:
                     standings = tree.xpath(
                         TEAM_RANKWISE_XPATH + xpath_teams_list)
 
-                if (main == 1):
+                if (main == 1 or main == 7):
                     teamRank = tree.xpath(
                         '//td[@class="legend position"]/text()')
                     teamName = []
@@ -268,7 +266,7 @@ if __name__ == "__main__":
                 chop(find_by)
                 print(
                     "\nThe fixtures for this team for the current season are:")
-                if (main == 1):
+                if (main == 1 or main == 7):
                     find(uclhome, uclaway, total_teams, find_by)
                 else:
                     find(team_home, team_away, total_teams, find_by)
